@@ -12,6 +12,8 @@ func main() {
 	euroSignPitfall()
 	fmt.Println("Converting a String to Runes:")
 	convertStringsToRunes()
+	fmt.Println("\nEnumerating Strings:")
+	enumerStrings()
 }
 
 func dualStringNature() {
@@ -45,7 +47,7 @@ func euroSignPitfall() {
 func convertStringsToRunes() {
 	var price []rune = []rune("€48.95")
 	var currency string = string(price[0])
-	var amountString string = string(price[1:])
+	var amountString string = string(price[1:]) // Slicing a rune creates slice of runes
 	amount, parseErr := strconv.ParseFloat(amountString, 64)
 	fmt.Println("Length:", len(price))
 	fmt.Println("Currency:", currency)
@@ -53,5 +55,16 @@ func convertStringsToRunes() {
 		fmt.Println("Amount:", amount)
 	} else {
 		fmt.Println("Parse Error:", parseErr)
+	}
+}
+
+func enumerStrings() {
+	var price = "€48.95"
+	for index, char := range price {
+		fmt.Println(index, char, string(char))
+	}
+	fmt.Println("After explicit byte conversion:")
+	for index, singleByte := range []byte(price) {
+		fmt.Println(index, singleByte)
 	}
 }
