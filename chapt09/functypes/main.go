@@ -41,6 +41,14 @@ func functionCompareZero(products map[string]float64) {
 	}
 }
 
+// Using Functions as Results
+func selectCalculator(price float64) func(float64) float64 { // returning function
+	if price > 100 {
+		return calcWithTax
+	}
+	return calcWithoutTax
+}
+
 func main() {
 	products := map[string]float64{
 		"Kayak":      275,
@@ -50,4 +58,9 @@ func main() {
 	functCompareZero(products)
 	fmt.Println("\nUsing Functions as Arguments:")
 	functionCompareZero(products)
+
+	fmt.Println("\nUsing Functions as Results:")
+	for product, price := range products {
+		printPrice(product, price, selectCalculator(price))
+	}
 }
