@@ -91,4 +91,44 @@ func main() {
 	}
 	//fmt.Println("Price:", bundle.GetPrice(0)) // Go cannot decide which method to use!
 	fmt.Println("One special:", bundle.SpecialDeal.Name) // bundle.Name is ambigous too!
+
+	fmt.Println("\nUnderstanding Composition and Interfaces")
+	products := map[string]store.ItemForSale{
+		// cannot use store.NewBoat("Kayak", 279, 1, false) (value of type *store.Boat)
+		// as type *store.Product in map literal
+		"Kayak": store.NewBoat("Kayak", 279, 1, false),
+		"Ball":  store.NewProduct("Soccer Ball", "Soccer", 19.50),
+	}
+	for key, p := range products {
+		// fmt.Println("Key:", key, "Price:", p.GetPrice(0.2))
+
+		// Understanding the Type Switch Limitation:
+		switch item := p.(type) {
+		// This is problematic:
+		// case *store.Product, *store.Boat:
+		// 	fmt.Println("Name:", item.Name, "Category:", item.Category,
+		// 		"Price:", item.GetPrice(0.2))
+
+		// Solution 1:
+		// case *store.Product:
+		// 	fmt.Println("Name:", item.Name, "Category:", item.Category,
+		// 		"Price:", item.GetPrice(0.2))
+		// case *store.Boat:
+		// 	fmt.Println("Name:", item.Name, "Category:", item.Category,
+		// 		"Price:", item.GetPrice(0.2))
+
+		// Solution 2 with additional interfaces in Product
+		case store.Describable:
+			// fmt.Println("Name:", item.GetName(), "Category:", item.GetCategory(),
+			// 	"Price:", item.(store.ItemForSale).GetPrice(0.2))
+			// No type assertion needed any more since interfaces are combined
+			fmt.Println("Name:", item.GetName(), "Category:", item.GetCategory(),
+				"Price:", item.GetPrice(0.2))
+
+		default:
+			fmt.Println("Key:", key, "Price:", p.GetPrice(0.2))
+		}
+
+	}
+
 }
