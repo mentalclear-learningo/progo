@@ -34,6 +34,9 @@ func main() {
 	encodeInterfaces()
 }
 
+// The output for this one is changed
+// due to the MarshalJSON() method that is implemented
+// in the discount.go
 func encodeInterfaces() {
 	var writer strings.Builder
 	encoder := json.NewEncoder(&writer)
