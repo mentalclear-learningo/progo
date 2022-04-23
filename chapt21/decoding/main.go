@@ -19,6 +19,87 @@ func main() {
 	decodingArrays()
 	fmt.Println("\nDecoding Arrays - Known structure:")
 	decodingKnownArrays()
+	fmt.Println("\nDecoding maps:")
+	decodingMaps()
+	fmt.Println("\nDecoding specified maps:")
+	decodingSpecedMaps()
+	fmt.Println("\nDecoding Structs:")
+	decodingStructs()
+	fmt.Println("\nUsing Struct Tags to control Decoding:")
+	useStructTags()
+}
+
+func useStructTags() {
+	reader := strings.NewReader(`
+	{"Name":"Kayak","Category":"Watersports","Price":279, "Offer": "10"}`)
+	decoder := json.NewDecoder(reader)
+	for {
+		var val DiscountedProduct
+		err := decoder.Decode(&val)
+		if err != nil {
+			if err != io.EOF {
+				Printfln("Error: %v", err.Error())
+			}
+			break
+		} else {
+			Printfln("Name: %v, Category: %v, Price: %v, Discount: %v",
+				val.Name, val.Category, val.Price, val.Discount)
+		}
+	}
+}
+
+func decodingStructs() {
+	reader := strings.NewReader(`
+	{"Name":"Kayak","Category":"Watersports","Price":279}
+	{"Name":"Lifejacket","Category":"Watersports" }
+	{"name":"Canoe","category":"Watersports", "price": 100, "inStock": true }
+	`)
+	decoder := json.NewDecoder(reader)
+	// Disallow unknown feilds:
+	decoder.DisallowUnknownFields()
+	for {
+		var val Product
+		err := decoder.Decode(&val)
+		if err != nil {
+			if err != io.EOF {
+				Printfln("Error: %v", err.Error())
+			}
+			break
+		} else {
+			Printfln("Name: %v, Category: %v, Price: %v",
+				val.Name, val.Category, val.Price)
+		}
+	}
+}
+
+func decodingSpecedMaps() {
+	reader := strings.NewReader(`{"Kayak" : 279, "Lifejacket" : 49.95}`)
+	m := map[string]float64{} // I know that float64 will work for map values
+	decoder := json.NewDecoder(reader)
+	err := decoder.Decode(&m)
+	if err != nil {
+		Printfln("Error: %v", err.Error())
+	} else {
+		Printfln("Map: %T, %v", m, m)
+		for k, v := range m {
+			Printfln("Key: %v, Value: %v", k, v)
+		}
+	}
+}
+
+func decodingMaps() {
+	reader := strings.NewReader(`{"Kayak" : 279, "Lifejacket" : 49.95}`)
+	m := map[string]interface{}{}
+	decoder := json.NewDecoder(reader)
+	err := decoder.Decode(&m)
+	if err != nil {
+		Printfln("Error: %v", err.Error())
+	} else {
+		Printfln("Map: %T, %v", m, m)
+		for k, v := range m {
+			Printfln("Key: %v, Value: %v", k, v)
+		}
+	}
 }
 
 func decodingKnownArrays() {
