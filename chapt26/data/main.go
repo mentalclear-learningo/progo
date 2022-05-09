@@ -10,6 +10,36 @@ func main() {
 	withPlaceHolders()
 	Printfln("\nWith single row:")
 	withSingleRow()
+	Printfln("\nInserting a Row in the main.go File in the data Folder:")
+	addNewProduct()
+}
+
+func insertRow(db *sql.DB, p *Product) (id int64) {
+	res, err := db.Exec(`
+        INSERT INTO Products (Name, Category, Price)
+        VALUES (?, ?, ?)`, p.Name, p.Category.Id, p.Price)
+	if err == nil {
+		id, err = res.LastInsertId()
+		if err != nil {
+			Printfln("Result error: %v", err.Error())
+		}
+	} else {
+		Printfln("Exec error: %v", err.Error())
+	}
+	return
+}
+
+func addNewProduct() {
+	db, err := openDatabase()
+	if err == nil {
+		newProduct := Product{Name: "Stadium", Category: Category{Id: 2}, Price: 79500}
+		newID := insertRow(db, &newProduct)
+		p := queryDatabaseSingleRow(db, int(newID))
+		Printfln("New Product: %v", p)
+		db.Close()
+	} else {
+		panic(err)
+	}
 }
 
 type Category struct {
